@@ -6,7 +6,7 @@ export default function Home() {
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-12">
       <section className="grid items-center gap-8 rounded-3xl bg-linear-to-br from-amber-100 via-orange-50 to-stone-100 p-8 md:grid-cols-2">
         <div className="space-y-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-900">WDD 430 Assignment</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-900">WDD 430 - W02 Assignment</p>
           <h2 className="font-bold text-5xl leading-tight text-stone-900">Sacrament Meeting Planner</h2>
           <p className="max-w-xl text-lg text-stone-700">
             View upcoming agendas, navigate past programs, and print a clear program for each sacrament meeting.
