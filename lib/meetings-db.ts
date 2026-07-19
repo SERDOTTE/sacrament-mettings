@@ -23,7 +23,7 @@ const meetings: SacramentMeeting[] = [
   },
   {
     id: 2,
-    date: "2026-05-10",
+    date: "2026-07-19",
     meetingType: "testimony",
     presiding: "Bishop Smith",
     conducting: "Bishopric First Counselor",
@@ -42,7 +42,7 @@ const meetings: SacramentMeeting[] = [
   },
   {
     id: 3,
-    date: "2026-05-17",
+    date: "2026-07-26",
     meetingType: "stake",
     presiding: "Stake Presidency",
     conducting: "Stake Clerk",
@@ -58,7 +58,7 @@ const meetings: SacramentMeeting[] = [
   },
   {
     id: 4,
-    date: "2026-06-07",
+    date: "2026-08-02",
     meetingType: "regular",
     presiding: "Bishop Smith",
     conducting: "Brother Jones",
@@ -77,7 +77,7 @@ const meetings: SacramentMeeting[] = [
   },
   {
     id: 5,
-    date: "2026-07-12",
+    date: "2026-08-09",
     meetingType: "general",
     presiding: "Bishop Smith",
     conducting: "Bishopric Second Counselor",
