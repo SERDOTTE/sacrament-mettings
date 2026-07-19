@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import MeetingDetail from "@/components/MeetingDetail";
 import PrintButton from "@/components/PrintButton";
-import { getBaseUrl } from "@/lib/server-url";
+import { getMeetingById } from "@/lib/meetings-db";
 import type { SacramentMeeting } from "@/lib/types";
 
 interface MeetingDetailPageProps {
@@ -13,18 +13,13 @@ interface MeetingDetailPageProps {
 export const dynamic = "force-dynamic";
 
 async function fetchMeeting(id: string): Promise<SacramentMeeting | null> {
-  const baseUrl = await getBaseUrl();
-  const response = await fetch(`${baseUrl}/api/meetings/${id}`, { cache: "no-store" });
+  const numericId = Number(id);
 
-  if (response.status === 400 || response.status === 404) {
+  if (!Number.isInteger(numericId)) {
     return null;
   }
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch meeting.");
-  }
-
-  return (await response.json()) as SacramentMeeting;
+  return getMeetingById(numericId);
 }
 
 export default async function MeetingDetailPage({ params }: MeetingDetailPageProps) {

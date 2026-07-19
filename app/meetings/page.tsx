@@ -1,18 +1,11 @@
 import MeetingCard from "@/components/MeetingCard";
+import { getMeetings } from "@/lib/meetings-db";
 import type { SacramentMeeting } from "@/lib/types";
-import { getBaseUrl } from "@/lib/server-url";
 
 export const dynamic = "force-dynamic";
 
 async function fetchMeetings(): Promise<SacramentMeeting[]> {
-  const baseUrl = await getBaseUrl();
-  const response = await fetch(`${baseUrl}/api/meetings`, { cache: "no-store" });
-
-  if (!response.ok) {
-    return [];
-  }
-
-  return (await response.json()) as SacramentMeeting[];
+  return getMeetings();
 }
 
 export default async function MeetingsPage() {
