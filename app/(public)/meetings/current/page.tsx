@@ -12,14 +12,15 @@ function toIsoDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export default function CurrentMeetingPage() {
+export default async function CurrentMeetingPage() {
   const today = new Date();
   const dayOfWeek = today.getDay();
   const sunday = new Date(today);
   sunday.setDate(today.getDate() - dayOfWeek);
 
   const sundayDate = toIsoDate(sunday);
-  const match = getMeetings(sundayDate)[0];
+  const meetings = await getMeetings(sundayDate);
+  const match = meetings[0];
 
   if (match) {
     redirect(`/meetings/${match.id}`);

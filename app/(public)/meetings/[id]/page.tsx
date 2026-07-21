@@ -19,7 +19,7 @@ async function fetchMeeting(id: string): Promise<SacramentMeeting | null> {
     return null;
   }
 
-  return getMeetingById(numericId);
+  return await getMeetingById(numericId);
 }
 
 export default async function MeetingDetailPage({ params }: MeetingDetailPageProps) {
@@ -33,7 +33,10 @@ export default async function MeetingDetailPage({ params }: MeetingDetailPagePro
   return (
     <main className="space-y-4">
       <div className="flex flex-wrap items-center gap-3 print:hidden">
-        <Link href="/meetings" className="rounded-md border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100">
+        <Link
+          href="/meetings"
+          className="rounded-md border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+        >
           Back to Meetings
         </Link>
         <PrintButton />
