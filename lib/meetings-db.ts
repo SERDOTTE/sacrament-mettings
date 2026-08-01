@@ -1,7 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 import type { SacramentMeeting } from "@/lib/types";
 
-const sql = neon(process.env.DATABASE_URL!);
+const connectionString = process.env.DATABASE_URL;
+const sql = connectionString ? neon(connectionString) : null;
 
 const ITEMS_PER_PAGE = 5;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -10,6 +11,10 @@ export async function getMeetings(
   queryOrDate: string | null = "",
   currentPage?: number,
 ): Promise<SacramentMeeting[]> {
+  if (!sql) {
+    return [];
+  }
+
   const normalized = queryOrDate ?? "";
 
   if (normalized && ISO_DATE_PATTERN.test(normalized)) {
@@ -89,6 +94,10 @@ export async function getMeetings(
 }
 
 export async function getMeetingsTotalPages(query: string = ""): Promise<number> {
+  if (!sql) {
+    return 0;
+  }
+
   const searchTerm = `%${query}%`;
   const rows = await sql`
     SELECT COUNT(*)
@@ -104,6 +113,10 @@ export async function getMeetingsTotalPages(query: string = ""): Promise<number>
 }
 
 export async function getMeetingById(id: number): Promise<SacramentMeeting | null> {
+  if (!sql) {
+    return null;
+  }
+
   const rows = await sql`
     SELECT
       id,
