@@ -4,7 +4,7 @@ import type { SacramentMeeting } from "@/lib/types";
 const connectionString = process.env.DATABASE_URL;
 const sql = connectionString ? neon(connectionString) : null;
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 6;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function getMeetings(
