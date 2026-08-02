@@ -1,0 +1,35 @@
+import Link from "next/link";
+
+import type { SacramentMeeting } from "@/lib/types";
+
+interface MeetingCardProps {
+  meeting: SacramentMeeting;
+}
+
+function labelMeetingType(type: SacramentMeeting["meetingType"]): string {
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+export default function MeetingCard({ meeting }: MeetingCardProps) {
+  return (
+    <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <h3 className="text-xl font-bold text-stone-900">{meeting.date}</h3>
+        <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
+          {labelMeetingType(meeting.meetingType)}
+        </span>
+      </div>
+      <p className="text-sm text-stone-700">Presiding: {meeting.presiding}</p>
+      <p className="text-sm text-stone-700">Conducting: {meeting.conducting}</p>
+      <p className="mt-2 text-sm text-stone-700">
+        Opening hymn: #{meeting.openingHymn.number} {meeting.openingHymn.title}
+      </p>
+      <Link
+        href={`/meetings/${meeting.id}`}
+        className="mt-4 inline-flex rounded-md bg-stone-900 px-4 py-2 text-sm font-semibold text-white hover:bg-stone-700"
+      >
+        View Full Program
+      </Link>
+    </article>
+  );
+}
