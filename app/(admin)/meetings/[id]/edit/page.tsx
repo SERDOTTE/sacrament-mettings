@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import MeetingEditForm from "@/components/MeetingEditForm";
@@ -6,6 +7,11 @@ import { getMeetingById } from "@/lib/meetings-db";
 interface EditMeetingPageProps {
   params: Promise<{ id: string }>;
 }
+
+export const metadata: Metadata = {
+  title: "Edit Meeting",
+  description: "Update an existing sacrament meeting program.",
+};
 
 export default async function EditMeetingPage({ params }: EditMeetingPageProps) {
   const { id } = await params;

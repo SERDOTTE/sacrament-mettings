@@ -254,7 +254,9 @@ export default function MeetingForm() {
         </div>
       </div>
 
-      {state.message ? <p className="text-sm text-stone-700">{state.message}</p> : null}
+      {state.message ? (
+        <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">{state.message}</p>
+      ) : null}
 
       <div className="flex gap-3">
         <button type="submit" disabled={isPending} className="rounded-md bg-stone-900 px-4 py-2 text-sm font-semibold text-white">

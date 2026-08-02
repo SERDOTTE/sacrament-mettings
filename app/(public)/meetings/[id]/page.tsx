@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import MeetingDetail from "@/components/MeetingDetail";
@@ -20,6 +21,31 @@ async function fetchMeeting(id: string): Promise<SacramentMeeting | null> {
   }
 
   return await getMeetingById(numericId);
+}
+
+export async function generateMetadata({ params }: MeetingDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const meeting = await fetchMeeting(id);
+
+  if (!meeting) {
+    return {
+      title: "Meeting Not Found",
+      description: "The requested meeting program could not be found.",
+    };
+  }
+
+  const pageTitle = `${meeting.date} Program`;
+  const pageDescription = `Sacrament meeting program for ${meeting.date}, presided by ${meeting.presiding}.`;
+
+  return {
+    title: pageTitle,
+    description: pageDescription,
+    openGraph: {
+      title: pageTitle,
+      description: pageDescription,
+      type: "article",
+    },
+  };
 }
 
 export default async function MeetingDetailPage({ params }: MeetingDetailPageProps) {

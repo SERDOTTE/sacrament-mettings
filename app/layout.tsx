@@ -18,8 +18,22 @@ const bodyFont = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: "Sacrament Meeting Planner",
+  title: {
+    default: "Sacrament Meeting Planner",
+    template: "%s | Sacrament Meeting Planner",
+  },
   description: "Plan, view, and print sacrament meeting programs.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  openGraph: {
+    title: "Sacrament Meeting Planner",
+    description: "Plan, view, and print sacrament meeting programs.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Sacrament Meeting Planner",
+    description: "Plan, view, and print sacrament meeting programs.",
+  },
 };
 
 export default function RootLayout({

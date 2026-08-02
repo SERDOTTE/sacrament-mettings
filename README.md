@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sacrament Meeting Planner
 
-## Getting Started
+Next.js App Router planner for viewing and managing sacrament meeting programs.
 
-First, run the development server:
+## Environment Setup
+
+Copy values from [.env.example](.env.example) into your local [.env.local](.env.local) (already gitignored).
+
+Required auth variables:
+
+- `AUTH_SECRET`
+- `AUTH_OWNER_EMAIL`
+- `AUTH_OWNER_PASSWORD_HASH` (bcrypt hash)
+- Optional: `AUTH_OWNER_NAME`
+
+Important for local `.env.local`:
+
+- Escape each `$` in `AUTH_OWNER_PASSWORD_HASH` as `\$`.
+- Example format: `AUTH_OWNER_PASSWORD_HASH=\$2b\$10\$...`
+- This prevents Next.js env expansion from corrupting the bcrypt hash.
+
+Default local owner test account configured in this workspace:
+
+- Email: `owner@example.com`
+- Password: `admin123`
+
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Authentication Coverage
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Login page: `/login`
+- Sign-out action/button in the header
+- Protected routes (middleware):
+	- `/meetings/new`
+	- `/meetings/[id]/edit`
+- Server-side authorization checks also run inside create, update, and delete server actions.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Metadata Coverage
 
-## Learn More
+- Site-level metadata is defined in [app/layout.tsx](app/layout.tsx).
+- Route metadata is defined in:
+	- [app/(public)/meetings/page.tsx](app/(public)/meetings/page.tsx)
+	- [app/(public)/meetings/[id]/page.tsx](app/(public)/meetings/[id]/page.tsx) via `generateMetadata`
+	- [app/login/page.tsx](app/login/page.tsx)
+- Open Graph image is provided via file-based metadata at [app/opengraph-image.jpg](app/opengraph-image.jpg).
 
-To learn more about Next.js, take a look at the following resources:
+## Quick Checks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Manual verification checklist:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Open `/meetings/new` while logged out and confirm redirect to `/login`.
+2. Login with owner credentials and verify access to `/meetings/new` and `/meetings/[id]/edit`.
+3. Click `Sign Out` and verify protected pages redirect to login again.
+4. Inspect page source for title and description meta tags on `/`, `/meetings`, and `/meetings/[id]`.

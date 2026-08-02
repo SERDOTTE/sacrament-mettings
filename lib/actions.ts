@@ -1,11 +1,23 @@
 "use server";
 
+import { signIn, auth } from "@/auth";
+import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { addMeeting, deleteMeeting as deleteMeetingRecord, updateMeeting as updateMeetingRecord } from "@/lib/meetings-db";
 import type { SacramentMeeting } from "@/lib/types";
+
+async function requireOwnerSession() {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Not authenticated");
+  }
+
+  return session;
+}
 
 export interface MeetingFormState {
   message: string;
@@ -84,7 +96,26 @@ function toMeetingPayload(parsedData: z.infer<typeof MeetingFormSchema>): Omit<S
   };
 }
 
-export async function createMeeting(prevState: MeetingFormState, formData: FormData): Promise<MeetingFormState> {
+export async function authenticate(_prevState: string, formData: FormData): Promise<string> {
+  try {
+    await signIn("credentials", formData);
+    return "";
+  } catch (error) {
+    if (error instanceof AuthError) {
+      if (error.type === "CredentialsSignin") {
+        return "Invalid email or password.";
+      }
+
+      return "Something went wrong.";
+    }
+
+    throw error;
+  }
+}
+
+export async function createMeeting(_prevState: MeetingFormState, formData: FormData): Promise<MeetingFormState> {
+  await requireOwnerSession();
+
   const parsedPayload = parseFormData(formData);
   const parsed = MeetingFormSchema.safeParse(parsedPayload);
 
@@ -98,21 +129,24 @@ export async function createMeeting(prevState: MeetingFormState, formData: FormD
   try {
     await addMeeting(toMeetingPayload(parsed.data));
     revalidatePath("/meetings");
-    redirect("/meetings");
   } catch (error) {
     console.error("Failed to create meeting:", error);
     return {
-      message: "Unable to create the meeting right now.",
+      message: "Unable to create the meeting. Please try again.",
       errors: {},
     };
   }
+
+  redirect("/meetings?status=success&action=create");
 }
 
 export async function updateMeeting(
   id: number,
-  prevState: MeetingFormState,
+  _prevState: MeetingFormState,
   formData: FormData,
 ): Promise<MeetingFormState> {
+  await requireOwnerSession();
+
   const parsedPayload = parseFormData(formData);
   const parsed = MeetingFormSchema.safeParse(parsedPayload);
 
@@ -126,30 +160,34 @@ export async function updateMeeting(
   try {
     await updateMeetingRecord(id, toMeetingPayload(parsed.data));
     revalidatePath("/meetings");
-    redirect("/meetings");
   } catch (error) {
     console.error("Failed to update meeting:", error);
     return {
-      message: "Unable to update the meeting right now.",
+      message: "Unable to update the meeting. Please try again.",
       errors: {},
     };
   }
+
+  redirect("/meetings?status=success&action=update");
 }
 
 export async function deleteMeeting(formData: FormData): Promise<void> {
+  await requireOwnerSession();
+
   const idValue = formData.get("id");
   const meetingId = Number(idValue);
 
   if (!Number.isInteger(meetingId)) {
-    throw new Error("Invalid meeting id.");
+    redirect("/meetings?status=error&action=delete");
   }
 
   try {
     await deleteMeetingRecord(meetingId);
     revalidatePath("/meetings");
-    redirect("/meetings");
   } catch (error) {
     console.error("Failed to delete meeting:", error);
-    throw new Error("Unable to delete the meeting right now.");
+    redirect("/meetings?status=error&action=delete");
   }
+
+  redirect("/meetings?status=success&action=delete");
 }
