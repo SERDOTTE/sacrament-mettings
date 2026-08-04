@@ -29,8 +29,35 @@ function getOwnerUserByEmail(email: string): OwnerUser | null {
   };
 }
 
+function getOwnerPasswordCandidate(): string | null {
+  const passwordHash = process.env.AUTH_OWNER_PASSWORD_HASH;
+
+  if (passwordHash) {
+    return passwordHash;
+  }
+
+  const plainPassword = process.env.AUTH_OWNER_PASSWORD;
+
+  return plainPassword ?? null;
+}
+
+async function validateOwnerPassword(password: string): Promise<boolean> {
+  const passwordCandidate = getOwnerPasswordCandidate();
+
+  if (!passwordCandidate) {
+    return false;
+  }
+
+  if (passwordCandidate.startsWith("$2")) {
+    return bcrypt.compare(password, passwordCandidate);
+  }
+
+  return password === passwordCandidate;
+}
+
 export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
+  trustHost: true,
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -46,13 +73,12 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         }
 
         const user = getOwnerUserByEmail(parsed.data.email);
-        const ownerPasswordHash = process.env.AUTH_OWNER_PASSWORD_HASH;
 
-        if (!user || !ownerPasswordHash) {
+        if (!user) {
           return null;
         }
 
-        const matches = await bcrypt.compare(parsed.data.password, ownerPasswordHash);
+        const matches = await validateOwnerPassword(parsed.data.password);
 
         if (!matches) {
           return null;

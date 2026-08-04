@@ -10,14 +10,22 @@ Required auth variables:
 
 - `AUTH_SECRET`
 - `AUTH_OWNER_EMAIL`
-- `AUTH_OWNER_PASSWORD_HASH` (bcrypt hash)
+- Either `AUTH_OWNER_PASSWORD` (simple string, easiest for Vercel) or `AUTH_OWNER_PASSWORD_HASH` (bcrypt hash)
 - Optional: `AUTH_OWNER_NAME`
 
 Important for local `.env.local`:
 
-- Escape each `$` in `AUTH_OWNER_PASSWORD_HASH` as `\$`.
+- If you use `AUTH_OWNER_PASSWORD_HASH`, escape each `$` as `\$` in local `.env.local` to prevent Next.js env expansion from corrupting the bcrypt hash.
 - Example format: `AUTH_OWNER_PASSWORD_HASH=\$2b\$10\$...`
-- This prevents Next.js env expansion from corrupting the bcrypt hash.
+- For Vercel, set the same variables in Project Settings > Environment Variables. No escaping is needed there.
+
+Vercel production checklist:
+
+- Set `DATABASE_URL`
+- Set `AUTH_SECRET`
+- Set `AUTH_OWNER_EMAIL`
+- Set `AUTH_OWNER_PASSWORD=admin123` (or another password)
+- Set `NEXT_PUBLIC_SITE_URL=https://your-app-name.vercel.app`
 
 Default local owner test account configured in this workspace:
 
