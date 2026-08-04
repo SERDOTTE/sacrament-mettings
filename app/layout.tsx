@@ -5,6 +5,24 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import "./globals.css";
 
+const FALLBACK_SITE_URL = "http://localhost:3000";
+
+function resolveMetadataBase(): URL {
+  const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  if (!rawSiteUrl) {
+    return new URL(FALLBACK_SITE_URL);
+  }
+
+  const normalizedSiteUrl = /^https?:\/\//i.test(rawSiteUrl) ? rawSiteUrl : `https://${rawSiteUrl}`;
+
+  try {
+    return new URL(normalizedSiteUrl);
+  } catch {
+    return new URL(FALLBACK_SITE_URL);
+  }
+}
+
 const titleFont = Libre_Baskerville({
   variable: "--font-title",
   weight: ["400", "700"],
@@ -23,7 +41,7 @@ export const metadata: Metadata = {
     template: "%s | Sacrament Meeting Planner",
   },
   description: "Plan, view, and print sacrament meeting programs.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: resolveMetadataBase(),
   openGraph: {
     title: "Sacrament Meeting Planner",
     description: "Plan, view, and print sacrament meeting programs.",
